@@ -40,14 +40,12 @@ def signal_handler(signum, frame):
 for index, row in pts.iterrows():
     lst_result = []
 
-    # This try/except loop ensures that
-    #   you'll catch TimeoutException when it's sent.
-    signal.alarm(3)
+    signal.alarm(3) #Edit this to change the timeout seconds
     try:
-        panoids_with_timeout(lst_result, row['Y'], row['X'])  # Whatever your function that might hang
+        panoids_with_timeout(lst_result, row['Y'], row['X'])
     except TimeOutException:
         continue
-    signal.alarm(0)# continue the for loop if function A takes more than 5 second
+    signal.alarm(0)
     for record in lst_result:
         metadata = json.load(urlopen(apicallbase + record['panoid'] + '&key=' + mykey))
         year = (metadata['date'])[:4]
