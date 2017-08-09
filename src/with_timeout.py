@@ -73,6 +73,6 @@ results.to_csv(os.path.join(DATA_FOLDER, 'results_preston.csv'))
 
 for index, row in results.iterrows():
     if row['year'] == '' or row['month'] == '':
-        metadata = json.load(urlopen(apicallbase + row['panoid'] + '&key=' + mykey))
+        metadata = json.load(urlopen(apicallbase + row['pano_id'] + '&key=' + mykey))
         results.loc[index, 'year'] = (metadata['date'])[:4]
         results.loc[index, 'month'] = (metadata['date'])[:5]
