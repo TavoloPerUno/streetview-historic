@@ -85,7 +85,7 @@ def main(argv):
         elif opt in ("-k", "--apikey"):
             apikey = arg
         elif opt in ("-t", "--timeout"):
-            timeout_s = arg
+            timeout_s = int(arg)
     write_historic_panoids(inputfile, apikey, timeout_s)
 
 if __name__ == "__main__":
