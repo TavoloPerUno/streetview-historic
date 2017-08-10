@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a904cdb4-32e7-41a4-86eb-45d28013d62a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/results_preston.csv" afterPath="$PROJECT_DIR$/data/results_preston.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/with_timeout.py" afterPath="$PROJECT_DIR$/src/with_timeout.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/timeout_with_alarm.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,11 +24,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="with_timeout.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="with_timeout.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/with_timeout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="75" column="61" lean-forward="false" selection-start-line="75" selection-start-column="61" selection-end-line="75" selection-end-column="61" />
+            <state relative-caret-position="341">
+              <caret line="77" column="60" lean-forward="true" selection-start-line="69" selection-start-column="0" selection-end-line="77" selection-end-column="60" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="timeout_with_alarm.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/timeout_with_alarm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="982">
+              <caret line="88" column="55" lean-forward="false" selection-start-line="88" selection-start-column="55" selection-end-line="88" selection-end-column="55" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -83,6 +95,7 @@
       <list>
         <option value="$PROJECT_DIR$/src/historic_panoids.ipynb" />
         <option value="$PROJECT_DIR$/src/with_timeout.py" />
+        <option value="$PROJECT_DIR$/src/timeout_with_alarm.py" />
       </list>
     </option>
   </component>
@@ -174,8 +187,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="streetview-historic" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/with_timeout.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/timeout_with_alarm.py" />
+      <option name="PARAMETERS" value="-i preston_PUA_random_points_2000.csv -k AIzaSyDiyJQYyVPaQ_GAamLY_AXmLiJBDo0Lyk4" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <method />
@@ -318,8 +331,23 @@
           <line>69</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/timeout_with_alarm.py</url>
+          <line>71</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/timeout_with_alarm.py</url>
+          <line>37</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/timeout_with_alarm.py</url>
+          <line>59</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="17" />
+      <option name="time" value="20" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -402,8 +430,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/with_timeout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="75" column="61" lean-forward="false" selection-start-line="75" selection-start-column="61" selection-end-line="75" selection-end-column="61" />
+        <state relative-caret-position="341">
+          <caret line="77" column="60" lean-forward="true" selection-start-line="69" selection-start-column="0" selection-end-line="77" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/timeout_with_alarm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="982">
+          <caret line="88" column="55" lean-forward="false" selection-start-line="88" selection-start-column="55" selection-end-line="88" selection-end-column="55" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
