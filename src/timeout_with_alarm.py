@@ -10,6 +10,23 @@ import urllib
 import signal
 from urllib2 import urlopen
 import getopt
+import argparse
+
+parser = argparse.ArgumentParser(description='Generate historic panoids')
+
+# Required positional argument
+parser.add_argument('input_file', type=str,
+                    help='Input file')
+
+# Optional positional argument
+parser.add_argument('-k', type=str,
+                    help='API key')
+
+# Optional argument
+parser.add_argument('-t', type=int,
+                    help='timeout seconds')
+
+
 
 def panoids_with_timeout(lst_result, lat, lon):
     lst_result.extend(streetview.panoids(lat, lon))
@@ -71,21 +88,11 @@ def main(argv):
     apikey = ''
     inputfile = ''
     timeout_s = 10
-    try:
-        opts, args = getopt.getopt(argv, "hi:k::t", ["ifile=", "ofile=", "timeout="])
-    except getopt.GetoptError:
-        print 'test.py -i <inputfile> -o <outputfile>'
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print 'timeout_with_alarm.py -i <inputfile> -k <google api key>'
-            sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputfile = os.path.join(DATA_FOLDER, arg)
-        elif opt in ("-k", "--apikey"):
-            apikey = arg
-        elif opt in ("-t", "--timeout"):
-            timeout_s = int(arg)
+
+    args = parser.parse_args()
+    inputfile = os.path.join(DATA_FOLDER, args.input_file)
+    apikey = args.k
+    timeout_s = args.t
     write_historic_panoids(inputfile, apikey, timeout_s)
 
 if __name__ == "__main__":
