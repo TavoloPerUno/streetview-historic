@@ -48,7 +48,7 @@ class TimeOutException(Exception):
         self.errors = errors
 
 def signal_handler(signum, frame):
-    raise TimeOutException("Timeout!")
+    raise TimeOutException("Timeout!", frame)
 
 signal.signal(signal.SIGALRM, signal_handler)
 
@@ -62,7 +62,7 @@ def write_historic_panoids(input_file, apikey, timeout_s):
         signal.alarm(timeout_s) #Edit this to change the timeout seconds
         try:
             panoids_with_timeout(lst_result, row['Y'], row['X'])
-        except TimeOutException:
+        except TimeOutException as exc:
             continue
         signal.alarm(0)
         results.extend([{'id': row['id'],
