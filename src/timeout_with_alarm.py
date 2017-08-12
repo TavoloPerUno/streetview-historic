@@ -50,6 +50,8 @@ class TimeOutException(Exception):
 def signal_handler(signum, frame):
     raise TimeOutException("Timeout!")
 
+signal.signal(signal.SIGALRM, signal_handler)
+
 
 def write_historic_panoids(input_file, apikey, timeout_s):
     pts = pd.read_csv(input_file)
