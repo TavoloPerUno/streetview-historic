@@ -134,8 +134,12 @@ def write_historic_panoids(inputfile, apikey, timeout_s, cores):
 
     lst_result = []
     for file in lst_subfile:
-        result = pd.read_csv(file, index_col=None, header=0)
-        lst_result.append(result)
+        if os.path.isfile(file):
+            try:
+                result = pd.read_csv(file, index_col=None, header=0)
+                lst_result.append(result)
+            except pd.errors.EmptyDataError:
+                continue
     result = pd.concat(lst_result)
 
     result.to_csv(os.path.join(DATA_FOLDER, 'panoids_' + os.path.basename(inputfile)), index=False, header=True)
@@ -168,8 +172,12 @@ def fill_year_month(inputfile, apikey, cores):
 
     lst_result = []
     for file in lst_subfile:
-        result = pd.read_csv(file, index_col=None, header=0)
-        lst_result.append(result)
+        if os.path.isfile(file):
+            try:
+                result = pd.read_csv(file, index_col=None, header=0)
+                lst_result.append(result)
+            except pd.errors.EmptyDataError:
+                continue
     result = pd.concat(lst_result)
 
 
