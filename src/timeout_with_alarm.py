@@ -10,6 +10,7 @@ import urllib
 import signal
 from urllib2 import urlopen
 import getopt
+import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser(description='Generate historic panoids')
@@ -17,6 +18,9 @@ parser = argparse.ArgumentParser(description='Generate historic panoids')
 # Required positional argument
 parser.add_argument('input_file', type=str,
                     help='Input file')
+
+parser.add_argument('-m', type=str,
+                    help='Mode')
 
 # Optional positional argument
 parser.add_argument('-k', type=str,
@@ -53,10 +57,10 @@ def signal_handler(signum, frame):
 signal.signal(signal.SIGALRM, signal_handler)
 
 
-def write_historic_panoids(input_file, apikey, timeout_s):
-    pts = pd.read_csv(input_file)
+def get_historic_panoids(res, apikey, timeout_s, filename):
+
     results = []
-    for index, row in pts.iterrows():
+    for index, row in res.iterrows():
         lst_result = []
 
         signal.alarm(timeout_s) #Edit this to change the timeout seconds
@@ -76,15 +80,99 @@ def write_historic_panoids(input_file, apikey, timeout_s):
 
     results = pd.DataFrame(results)
 
-    results.to_csv(os.path.join(DATA_FOLDER, 'panoids_' + os.path.basename(input_file)))
+    results.to_csv(os.path.join(DATA_FOLDER, filename), index=False, header=True)
 
-    for index, row in results.iterrows():
-        if row['year'] == '' or row['month'] == '':
-            metadata = json.load(urlopen(apicallbase + row['pano_id'] + '&key=' + apikey))
-            results.loc[index, 'year'] = (metadata['date'])[:4]
-            results.loc[index, 'month'] = (metadata['date'])[:5]
 
-    results.to_csv(os.path.join(DATA_FOLDER, 'panoids_final_' + os.path.basename(input_file)))
+
+
+def get_month_and_year_from_api(res, apikey, file_name):
+    for index, row in res.iterrows():
+        if row['year'] == '' or row['month'] == '' or pd.isnull(row['year']) or pd.isnull(row['month']):
+            i = 0
+            while True:
+
+                requesturl = apicallbase + row['pano_id'] + '&key=' + apikey
+                if i != 0 :
+                    print ("Timed out : " + apicallbase + row['pano_id'] + '&key=' + apikey)
+                    i += 1
+                try:
+                    i -= 1
+                    metadata = json.load(urlopen(requesturl))
+                    i += 1
+                    res.loc[index, 'year'] = (metadata['date'])[:4]
+                    res.loc[index, 'month'] = (metadata['date'])[-2:]
+                    break
+                except Exception:
+                    continue
+    res.to_csv(os.path.join(DATA_FOLDER, file_name), index= False, header=True)
+
+def write_historic_panoids(inputfile, apikey, timeout_s):
+    results = pd.read_csv(os.path.join(DATA_FOLDER,  inputfile), index_col=None, header=0)
+    i = 0
+    lst_subfile = []
+    procs = []
+    for res in np.array_split(results, 16):
+        lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
+
+        proc = mproc.Process(target=get_historic_panoids,
+                             args=(res,
+                                   apikey,
+                                   timeout_s,
+                                   os.path.join(DATA_FOLDER,
+                                                'part_' + str(i) + '_' + os.path.basename(inputfile)),
+                                   )
+                             )
+        procs.append(proc)
+        proc.start()
+        i += 1
+    for proc in procs:
+        proc.join()
+
+    lst_result = []
+    for file in lst_subfile:
+        result = pd.read_csv(file, index_col=None, header=0)
+        lst_result.append(result)
+    result = pd.concat(lst_result)
+
+    result.to_csv(os.path.join(DATA_FOLDER, 'panoids_' + os.path.basename(inputfile)), index=False, header=True)
+
+    for file in lst_subfile:
+        os.remove(file)
+
+    fill_year_month(inputfile, apikey)
+
+def fill_year_month(inputfile, apikey):
+    results = pd.read_csv(os.path.join(DATA_FOLDER, 'panoids_' + os.path.basename(inputfile)), index_col=None, header=0)
+    i = 0
+    lst_subfile = []
+    procs = []
+    for res in np.array_split(results, 16):
+        lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
+
+        proc = mproc.Process(target=get_month_and_year_from_api,
+                             args=(res,
+                                   apikey,
+                                   os.path.join(DATA_FOLDER,
+                                                'part_' + str(i) + '_' + os.path.basename(inputfile)),
+                                   )
+                             )
+        procs.append(proc)
+        proc.start()
+        i += 1
+    for proc in procs:
+        proc.join()
+
+    lst_result = []
+    for file in lst_subfile:
+        result = pd.read_csv(file, index_col=None, header=0)
+        lst_result.append(result)
+    result = pd.concat(lst_result)
+
+
+    result.to_csv(os.path.join(DATA_FOLDER, 'panoids_final_' + os.path.basename(inputfile)), header=True)
+
+    for file in lst_subfile:
+        os.remove(file)
 
 def main(argv):
     apikey = ''
@@ -95,7 +183,11 @@ def main(argv):
     inputfile = os.path.join(DATA_FOLDER, args.input_file)
     apikey = args.k
     timeout_s = args.t
-    write_historic_panoids(inputfile, apikey, timeout_s)
+    mode = args.m
+    if mode == 'full':
+        write_historic_panoids(inputfile, apikey, timeout_s)
+    else:
+        fill_year_month(inputfile, apikey)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
