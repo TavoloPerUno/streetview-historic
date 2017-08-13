@@ -40,7 +40,7 @@ def panoids_with_timeout(lst_result, lat, lon):
 
 DATA_FOLDER = '../data'
 apicallbase = 'https://maps.googleapis.com/maps/api/streetview/metadata?&pano='
-apikey = 'AIzaSyDiyJQYyVPaQ_GAamLY_AXmLiJBDo0Lyk4'
+apikey = ''
 
 
 results = []
