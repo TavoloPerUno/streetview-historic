@@ -81,9 +81,10 @@ def get_historic_panoids(res, apikey, timeout_s, filename):
                          'year': record['year'] if 'year' in record else '',
                          'month': record['month'] if 'month' in record else ''} for record in lst_result])
 
-    results = pd.DataFrame(results)
+    if len(results) > 0:
+        results = pd.DataFrame(results)
 
-    results.to_csv(os.path.join(DATA_FOLDER, filename), index=False, header=True)
+        results.to_csv(os.path.join(DATA_FOLDER, filename), index=False, header=True)
 
 
 
@@ -142,7 +143,7 @@ def write_historic_panoids(inputfile, apikey, timeout_s, cores):
     for file in lst_subfile:
         os.remove(file)
 
-    fill_year_month(inputfile, apikey)
+    fill_year_month(inputfile, apikey, cores)
 
 def fill_year_month(inputfile, apikey, cores):
     results = pd.read_csv(os.path.join(DATA_FOLDER, 'panoids_' + os.path.basename(inputfile)), index_col=None, header=0)
