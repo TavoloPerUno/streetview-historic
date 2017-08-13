@@ -26,6 +26,9 @@ parser.add_argument('-m', type=str,
 parser.add_argument('-k', type=str,
                     help='API key')
 
+parser.add_argument('-p', type=int,
+                    help='Num cores')
+
 # Optional argument
 parser.add_argument('-t', type=int,
                     help='timeout seconds')
@@ -106,12 +109,12 @@ def get_month_and_year_from_api(res, apikey, file_name):
                     continue
     res.to_csv(os.path.join(DATA_FOLDER, file_name), index= False, header=True)
 
-def write_historic_panoids(inputfile, apikey, timeout_s):
+def write_historic_panoids(inputfile, apikey, timeout_s, cores):
     results = pd.read_csv(os.path.join(DATA_FOLDER,  inputfile), index_col=None, header=0)
     i = 0
     lst_subfile = []
     procs = []
-    for res in np.array_split(results, 16):
+    for res in np.array_split(results, cores):
         lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
 
         proc = mproc.Process(target=get_historic_panoids,
@@ -141,12 +144,12 @@ def write_historic_panoids(inputfile, apikey, timeout_s):
 
     fill_year_month(inputfile, apikey)
 
-def fill_year_month(inputfile, apikey):
+def fill_year_month(inputfile, apikey, cores):
     results = pd.read_csv(os.path.join(DATA_FOLDER, 'panoids_' + os.path.basename(inputfile)), index_col=None, header=0)
     i = 0
     lst_subfile = []
     procs = []
-    for res in np.array_split(results, 16):
+    for res in np.array_split(results, cores):
         lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
 
         proc = mproc.Process(target=get_month_and_year_from_api,
@@ -184,10 +187,11 @@ def main(argv):
     apikey = args.k
     timeout_s = args.t
     mode = args.m
+    cores = args.p
     if mode == 'full':
-        write_historic_panoids(inputfile, apikey, timeout_s)
+        write_historic_panoids(inputfile, apikey, timeout_s, cores)
     else:
-        fill_year_month(inputfile, apikey)
+        fill_year_month(inputfile, apikey, cores)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
