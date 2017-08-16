@@ -106,6 +106,8 @@ def get_month_and_year_from_api(res, apikey, file_name):
                     if 'date' in metadata:
                         res.loc[index, 'year'] = (metadata['date'])[:4]
                         res.loc[index, 'month'] = (metadata['date'])[-2:]
+                    else:
+                        print ("Skipping " + row['pano_id'])
                     break
                 except Exception:
                     continue
@@ -158,7 +160,7 @@ def fill_year_month(inputfile, apikey, cores):
     for res in np.array_split(results, cores):
         lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
 
-        if i not in [3,12,20,24,27]:
+        if i not in [1,2,3,7,8,9,12,14,15,16,17,18,19,20,22,25,26,27]:
             proc = mproc.Process(target=get_month_and_year_from_api,
                                  args=(res,
                                        apikey,
@@ -182,6 +184,9 @@ def fill_year_month(inputfile, apikey, cores):
                 continue
     result = pd.concat(lst_result)
 
+    for index, row in result.iterrows():
+        if row['year'] == '' or row['month'] == '' or pd.isnull(row['year']) or pd.isnull(row['month']):
+            result.drop(index, inplace=True)
 
     result.to_csv(os.path.join(DATA_FOLDER, 'panoids_final_' + os.path.basename(inputfile)), header=True)
 
