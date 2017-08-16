@@ -103,8 +103,9 @@ def get_month_and_year_from_api(res, apikey, file_name):
                     i -= 1
                     metadata = json.load(urlopen(requesturl))
                     i += 1
-                    res.loc[index, 'year'] = (metadata['date'])[:4]
-                    res.loc[index, 'month'] = (metadata['date'])[-2:]
+                    if 'date' in metadata:
+                        res.loc[index, 'year'] = (metadata['date'])[:4]
+                        res.loc[index, 'month'] = (metadata['date'])[-2:]
                     break
                 except Exception:
                     continue
@@ -157,15 +158,16 @@ def fill_year_month(inputfile, apikey, cores):
     for res in np.array_split(results, cores):
         lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
 
-        proc = mproc.Process(target=get_month_and_year_from_api,
-                             args=(res,
-                                   apikey,
-                                   os.path.join(DATA_FOLDER,
+        if i not in [0,4,5,6,7,9,10,11,12,14]:
+            proc = mproc.Process(target=get_month_and_year_from_api,
+                                 args=(res,
+                                       apikey,
+                                       os.path.join(DATA_FOLDER,
                                                 'part_' + str(i) + '_' + os.path.basename(inputfile)),
-                                   )
-                             )
-        procs.append(proc)
-        proc.start()
+                                                 )
+                                 )
+            procs.append(proc)
+            proc.start()
         i += 1
     for proc in procs:
         proc.join()
