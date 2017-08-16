@@ -158,7 +158,7 @@ def fill_year_month(inputfile, apikey, cores):
     for res in np.array_split(results, cores):
         lst_subfile.append(os.path.join(DATA_FOLDER, 'part_' + str(i) + '_' + os.path.basename(inputfile)))
 
-        if i not in [0,4,5,6,7,9,10,11,12,14]:
+        if i not in [3,12,20,24,27]:
             proc = mproc.Process(target=get_month_and_year_from_api,
                                  args=(res,
                                        apikey,
